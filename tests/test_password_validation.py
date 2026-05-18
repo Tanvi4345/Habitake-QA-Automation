@@ -68,7 +68,7 @@ def test_password_validation(page):
 
     # Screenshot
     page.screenshot(
-        path="password_validation.png",
+        path="Playwright Habitake/screenshots/password_validation.png",
         full_page=True
     )
 

@@ -53,7 +53,7 @@ def test_home_page_elements(page):
     # ====================================
 
     page.screenshot(
-        path="home_page_elements.png",
+        path="Playwright Habitake/screenshots/home_page_elements.png",
         full_page=True
     )
 

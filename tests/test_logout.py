@@ -47,7 +47,7 @@ def test_logout(page):
 
     # Screenshot
     page.screenshot(
-        path="logout_success.png",
+        path="Playwright Habitake/screenshots/logout_success.png",
         full_page=True
     )
 

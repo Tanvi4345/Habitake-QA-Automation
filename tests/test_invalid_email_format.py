@@ -51,7 +51,7 @@ def test_invalid_email_format(page):
     )
 
     page.screenshot(
-        path="invalid_email.png",
+        path="Playwright Habitake/screenshots/invalid_email.png",
         full_page=True
     )
 

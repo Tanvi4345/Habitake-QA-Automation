@@ -67,7 +67,7 @@ def test_invalid_login(page):
 
     # Screenshot
     page.screenshot(
-        path="invalid_login.png",
+        path="Playwright Habitake/screenshots/invalid_login.png",
         full_page=True
     )
 

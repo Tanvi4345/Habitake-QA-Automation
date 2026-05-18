@@ -56,6 +56,6 @@ def test_property_without_price(page):
     )
 
     page.screenshot(
-        path="property_without_price.png",
+        path="Playwright Habitake/screenshots/property_without_price.png",
         full_page=True
     )

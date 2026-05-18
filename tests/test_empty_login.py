@@ -39,7 +39,7 @@ def test_empty_login(page):
 
     # Screenshot
     page.screenshot(
-        path="empty_login.png",
+        path="Playwright Habitake/screenshots/empty_login.png",
         full_page=True
     )
 

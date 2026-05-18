@@ -50,6 +50,6 @@ def test_multiple_property_creation(page):
     )
 
     page.screenshot(
-        path="multiple_property.png",
+        path="Playwright Habitake/screenshots/multiple_property.png",
         full_page=True
     )

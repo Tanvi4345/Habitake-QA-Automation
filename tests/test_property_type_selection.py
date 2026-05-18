@@ -162,7 +162,7 @@ def test_property_type_selection(page):
     # ====================================
 
     page.screenshot(
-        path="random_property_created.png",
+        path="Playwright Habitake/screenshots/random_property_created.png",
         full_page=True
     )
 

@@ -155,7 +155,7 @@ class AddPropertyPage(BasePage):
 
     def upload_image(self):
 
-        file_path = os.path.abspath("test_data/test_image2.jpg")
+        file_path = os.path.abspath("Playwright Habitake/test_data/test_image2.jpg")
 
         self.page.set_input_files("input[type='file']", file_path)
 
@@ -260,6 +260,6 @@ class AddPropertyPage(BasePage):
 
             print("Success Message Displayed")
 
-        self.page.screenshot(path="property_submit.png", full_page=True)
+        self.page.screenshot(path="Playwright Habitake/screenshots/property_submit.png", full_page=True)
 
         print("Property Submitted Successfully")

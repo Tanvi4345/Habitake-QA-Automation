@@ -94,7 +94,7 @@ def test_property_without_image(page):
     # ====================================
 
     page.screenshot(
-        path="property_without_image.png",
+        path="Playwright Habitake/screenshots/property_without_image.png",
         full_page=True
     )
 

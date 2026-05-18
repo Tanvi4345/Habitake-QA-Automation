@@ -64,7 +64,7 @@ class HomePage(BasePage):
 
             # Screenshot
             self.page.screenshot(
-                path="property_success_popup.png",
+                path="Playwright Habitake/screenshots/property_success_popup.png",
                 full_page=True
             )
 
