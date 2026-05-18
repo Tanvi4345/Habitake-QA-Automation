@@ -1,0 +1,1704 @@
+{
+  "info": {
+    "_postman_id": "b28ebd1d-183a-4073-beae-7b0a0c3e126a",
+    "name": "Habitake APIs Collections Copy",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "41638219",
+    "_collection_link": "https://go.postman.co/collection/41638219-b28ebd1d-183a-4073-beae-7b0a0c3e126a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "User Profile",
+      "item": [
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "const loginUser = jsonData?.data?.loginUser;",
+                  "",
+                  "// ===== POSITIVE TESTS =====",
+                  "pm.test(\"[Positive] Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Response has data object\", function () {",
+                  "    pm.expect(jsonData).to.have.property(\"data\");",
+                  "    pm.expect(jsonData.data).to.have.property(\"loginUser\");",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Login success is true\", function () {",
+                  "    pm.expect(loginUser.success).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] accessToken is present and non-empty\", function () {",
+                  "    pm.expect(loginUser.accessToken).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] idToken is present and non-empty\", function () {",
+                  "    pm.expect(loginUser.idToken).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] refreshToken is present and non-empty\", function () {",
+                  "    pm.expect(loginUser.refreshToken).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] userId is present and non-empty\", function () {",
+                  "    pm.expect(loginUser.userId).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] role is present\", function () {",
+                  "    pm.expect(loginUser.role).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] No GraphQL errors in response\", function () {",
+                  "    pm.expect(jsonData).to.not.have.property(\"errors\");",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Response time is less than 3000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "});",
+                  "",
+                  "// ===== NEGATIVE TESTS =====",
+                  "pm.test(\"[Negative] errorCode does not indicate failure\", function () {",
+                  "",
+                  "    pm.expect(",
+                  "        [0, null, \"\"]",
+                  "    ).to.include(",
+                  "        loginUser.errorCode",
+                  "    );",
+                  "});",
+                  "",
+                  "pm.test(\"[Negative] success is not false on valid credentials\", function () {",
+                  "    pm.expect(loginUser.success).to.not.equal(false);",
+                  "});",
+                  "",
+                  "pm.test(\"[Negative] message does not indicate failure\", function () {",
+                  "    if (loginUser.message) {",
+                  "        pm.expect(loginUser.message.toLowerCase()).to.not.include(\"invalid\");",
+                  "        pm.expect(loginUser.message.toLowerCase()).to.not.include(\"incorrect\");",
+                  "        pm.expect(loginUser.message.toLowerCase()).to.not.include(\"failed\");",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"[Negative] No unauthorized error in response\", function () {",
+                  "    pm.expect(pm.response.code).to.not.equal(401);",
+                  "});",
+                  "",
+                  "pm.test(\"[Negative] No forbidden error in response\", function () {",
+                  "    pm.expect(pm.response.code).to.not.equal(403);",
+                  "});",
+                  "",
+                  "// ===== EDGE CASE TESTS =====",
+                  "pm.test(\"[Edge] Response body is valid JSON\", function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] loginUser object has all expected fields\", function () {",
+                  "    const expectedFields = [\"success\", \"message\", \"accessToken\", \"idToken\", \"refreshToken\", \"session\", \"challengeName\", \"errorCode\", \"role\", \"userId\"];",
+                  "    expectedFields.forEach(field => {",
+                  "        pm.expect(loginUser).to.have.property(field);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] accessToken is a JWT (3 dot-separated parts)\", function () {",
+                  "    if (loginUser.accessToken) {",
+                  "        const parts = loginUser.accessToken.split(\".\");",
+                  "        pm.expect(parts.length).to.equal(3);",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] idToken is a JWT (3 dot-separated parts)\", function () {",
+                  "    if (loginUser.idToken) {",
+                  "        const parts = loginUser.idToken.split(\".\");",
+                  "        pm.expect(parts.length).to.equal(3);",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] challengeName is null or string when no MFA challenge\", function () {",
+                  "    pm.expect(loginUser.challengeName === null || typeof loginUser.challengeName === \"string\").to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] session is null or string\", function () {",
+                  "    pm.expect(loginUser.session === null || typeof loginUser.session === \"string\").to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] Content-Type header is application/json\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "// Save token if login is successful",
+                  "if (loginUser && loginUser.accessToken) {",
+                  "    pm.environment.set(\"user_token\", loginUser.accessToken);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "protocolVersion": "auto"
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "da2-ijnfol5okzc55mnzh435jbnvnq"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation Login($email: String!, $password: String!) {\n  loginUser(\n    input: {\n      email: $email\n      password: $password\n    }\n  ) {\n    success\n    message\n    accessToken\n    idToken\n    refreshToken\n    session\n    challengeName\n    errorCode\n    role\n    userId\n  }\n}\n",
+                "variables": "{\n  \"email\": \"qadozumo@yopmail.com\",\n  \"password\": \"Password@1234\"\n}\n"
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/graphql",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Positive - Successful Login",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "da2-ijnfol5okzc55mnzh435jbnvnq"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "mutation Login($email: String!, $password: String!) {\n  loginUser(\n    input: {\n      email: $email\n      password: $password\n    }\n  ) {\n    success\n    message\n    accessToken\n    idToken\n    refreshToken\n    session\n    challengeName\n    errorCode\n    role\n    userId\n  }\n}\n",
+                    "variables": "{\"email\": \"qadozumo@yopmail.com\", \"password\": \"Password@1234\"}"
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/graphql",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "da2-ijnfol5okzc55mnzh435jbnvnq",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\"data\": {\"loginUser\": {\"success\": true, \"message\": \"Login successful\", \"accessToken\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIn0.signature\", \"idToken\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20ifQ.signature\", \"refreshToken\": \"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWZyZXNoIjoidHJ1ZSJ9.signature\", \"session\": null, \"challengeName\": null, \"errorCode\": null, \"role\": \"TRAVELER\", \"userId\": \"user-uuid-123\"}}}"
+            },
+            {
+              "name": "Negative - Invalid Credentials",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "da2-ijnfol5okzc55mnzh435jbnvnq"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "mutation Login($email: String!, $password: String!) {\n  loginUser(\n    input: {\n      email: $email\n      password: $password\n    }\n  ) {\n    success\n    message\n    accessToken\n    idToken\n    refreshToken\n    session\n    challengeName\n    errorCode\n    role\n    userId\n  }\n}\n",
+                    "variables": "{\"email\": \"wrong@yopmail.com\", \"password\": \"WrongPassword\"}"
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/graphql",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "da2-ijnfol5okzc55mnzh435jbnvnq",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\"data\": {\"loginUser\": {\"success\": false, \"message\": \"Incorrect username or password.\", \"accessToken\": null, \"idToken\": null, \"refreshToken\": null, \"session\": null, \"challengeName\": null, \"errorCode\": \"NotAuthorizedException\", \"role\": null, \"userId\": null}}}"
+            },
+            {
+              "name": "Edge - MFA Challenge Required",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "da2-ijnfol5okzc55mnzh435jbnvnq"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "mutation Login($email: String!, $password: String!) {\n  loginUser(\n    input: {\n      email: $email\n      password: $password\n    }\n  ) {\n    success\n    message\n    accessToken\n    idToken\n    refreshToken\n    session\n    challengeName\n    errorCode\n    role\n    userId\n  }\n}\n",
+                    "variables": "{\"email\": \"mfauser@yopmail.com\", \"password\": \"Password@1234\"}"
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/graphql",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "da2-ijnfol5okzc55mnzh435jbnvnq",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\"data\": {\"loginUser\": {\"success\": false, \"message\": \"MFA challenge required\", \"accessToken\": null, \"idToken\": null, \"refreshToken\": null, \"session\": \"AYABeHBmMjM0NWFiY2RlZg\", \"challengeName\": \"SOFTWARE_TOKEN_MFA\", \"errorCode\": null, \"role\": null, \"userId\": null}}}"
+            }
+          ]
+        },
+        {
+          "name": "Refresh Token",
+          "protocolProfileBehavior": {
+            "protocolVersion": "auto",
+            "disabledSystemHeaders": {
+              "content-length": true,
+              "host": true,
+              "accept-encoding": true,
+              "content-type": true,
+              "connection": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{user_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation RefreshToken(\n  $refreshToken: String!\n  $username: String!\n) {\n  refreshToken(\n    input: {\n      refreshToken: $refreshToken\n      username: $username\n    }\n  ) {\n    success\n    message\n    accessToken\n    idToken\n    refreshToken\n    errorCode\n  }\n}\n",
+                "variables": "{\n  \"refreshToken\": \"eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.YUyxwnCHi-UcySXDfUkbj3KUHRhGQx2Wb7-kiMQNEXhCeo5Nh-O9Q3PXZsVADb-KEfl4N0dlN2jiiSDDp3Oph--722Sm2rRsTzTq1yZi2dkW0CRiGVHK_FELgbC3uI6YDqIyAXvhGqOC_CGc1JKNb3W09LJYK7PVIN9g8o6j74Za0bRmSBPw3gKuzXcWfFFZz_M09zEyeO2fMc85OYu7v8N0yvnv2j8RCN2XsWqP0ZI2QqmHayokEyU1Mi6MKU35X1pOxa0XIDh0wremFTusEfVQAxsHE5dPJlXw49Syeew80vBEuOR0irjxL4jFvjrA33MWvPdmsPpTF07m0jOZNA.0CI3riwRZzU0GRaZ.eUWbpYiP-IzulodFdEWno67C3SPy5KcKP9lfS5NbPy53A1rb5G2KfI2JrW5eZDjec_UKyWFky93vzj29oFuwgD_HdHTYRB6x4povndE23LYASbDPSQJX3ZhiRNpX5V7BRJT0xF3OK9UypvfMui-iaGQCcfucv_rAoPYuX5Rs---Z5OkWgBB09NEGfsi-VBmi666EX8fY-GzicNBVwmYvhq4oS-rVAqKQe3CaSL1_5852fOO54ZmcErUqgLHCqM24-GPq7oxaEEPyQlmL3sZ0XNWD1N9okanIFpawHbBhG4vkGxRLs-AoEzid6kvWXnMLPg7wgwoqsM1VqfGdECzio3abvbnsaM87271sn52tBM8z28GwwxNNPNa4X9YMA6Xa0DtMjEkrMWV9CLDERD5ZE3IEXVcKe8sjKNPwQGNF411-YmzdaQ1mNjyYTC4ptvh1Wa6RnOZhWPEu0kURu5ZhO99aGp6pnQF-sIe4aWA7pgLnZtHPyPNSdgJ7dBz30zdKTL7iOAUWMG_MuAH4W8F8VyrbcghLZE_ngL8AO-UjID9YsHTKOMe6sgklAjXJPq9KznDJQT1WffssGshOD9ed2x7i-691l43_ccyitrMw3vIQd8aJdCx5fehJ08PbLdU0Tg3zgkYUuB7lVP0Wzpgcoj8rBWOb9qGSM15msv9dFwF20Jqbcni8nwzGhkbes7pjFdT8GGDSdUBAm452aiWghsDPTaUnFi62m1CEt9zaKtMbWrMvym56S1dtSklo9C_y5YzUaq71-97Hp0S-NpdaPjZEODp6fOC5Rei-YmauECZJiqi6iDIKFoZCt4cSDWaz1yjAswCE-0Jh461Dv9LXuohRspTmt0ET1gy1I0bxEHJCyGY4t-P4FwdmOFC0tAn0Glj40hWE5HDOz5zhAxb3bJssTePN4YYoA9l_IE4lZP1-ACXqYrvSQFAWaMIG99EJFFl8A9Ek4xUBhb5n7hJGecMd0rH3RLJVbgJ7aasV-6iRqFaq-0tj29FZKd83rKOc6hDExHuAelbnOl101QyctqgqAJlpWNUFhiWrNLQ0JxxpLYpHLV5Kc8Tb4AyRenmXVJI9a84e4lqo_CnQ8AgEwWnVR5w1Pn0fX-vKyxvfJiQljd5Ruwxic2z7FmNva9z_oWYJoDCbc5JXo9yEf5eQ04k1fro7lPaZEJSXsyjuWNzgK9JyCYgjyebuTHTwlAU2YhMIihQZANSsISnFWpThFEA3L_vzKV1d-tk6eZgkXah90amRbCin-4xEytjCPvcKN1rAUuGeRXywoTs.Sko63Yn7v6a9GvU4WIOFrQ\",\n  \"username\": \"zonogu\"\n}\n"
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/graphql",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// ========================================",
+                  "// POSITIVE TEST CASES",
+                  "// ========================================",
+                  "",
+                  "// 1. Status Code Validation",
+                  "",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// 2. Response is JSON",
+                  "",
+                  "pm.test(\"Response body is JSON\", function () {",
+                  "    pm.expect(pm.response).to.be.json;",
+                  "});",
+                  "",
+                  "// 3. Logout API success field validation",
+                  "",
+                  "pm.test(\"Logout success field is true\", function () {",
+                  "",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(jsonData.data.logoutUser.success)",
+                  "        .to.be.true;",
+                  "});",
+                  "",
+                  "// 4. Logout message validation",
+                  "",
+                  "pm.test(\"Logout message is displayed\", function () {",
+                  "",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(jsonData.data.logoutUser.message)",
+                  "        .to.be.a(\"string\");",
+                  "",
+                  "    pm.expect(jsonData.data.logoutUser.message.length)",
+                  "        .to.be.above(0);",
+                  "});",
+                  "",
+                  "// 5. errorCode validation",
+                  "",
+                  "pm.test(\"errorCode is null or empty\", function () {",
+                  "",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(",
+                  "        jsonData.data.logoutUser.errorCode",
+                  "    ).to.satisfy(",
+                  "        value => value === null || value === \"\"",
+                  "    );",
+                  "});",
+                  "",
+                  "// 6. Response time validation",
+                  "",
+                  "pm.test(\"Response time is under 5000ms\", function () {",
+                  "",
+                  "    pm.expect(",
+                  "        pm.response.responseTime",
+                  "    ).to.be.below(5000);",
+                  "});",
+                  "",
+                  "// ========================================",
+                  "// NEGATIVE TEST CASES",
+                  "// ========================================",
+                  "",
+                  "// 1. success should be false",
+                  "",
+                  "pm.test(\"Logout API success is true\", function () {",
+                  "",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(",
+                  "        jsonData.data.logoutUser.success",
+                  "    ).to.be.true;",
+                  "});",
+                  "// 2. Error message validation",
+                  "",
+                  "pm.test(\"Proper error message displayed\", function () {",
+                  "",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(",
+                  "        jsonData.data.logoutUser.message",
+                  "    ).to.be.a(\"string\");",
+                  "",
+                  "    pm.expect(",
+                  "        jsonData.data.logoutUser.message.length",
+                  "    ).to.be.above(0);",
+                  "});",
+                  "",
+                  "// 3. errorCode should exist",
+                  "",
+                  "pm.test(\"errorCode field exists\", function () {",
+                  "",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(",
+                  "        jsonData.data.logoutUser",
+                  "    ).to.have.property(\"errorCode\");",
+                  "});",
+                  "",
+                  "// 4. Invalid session validation",
+                  "",
+                  "pm.test(\"Invalid session handled properly\", function () {",
+                  "",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(",
+                  "        jsonData.data.logoutUser.message",
+                  "    ).to.not.equal(\"\");",
+                  "});",
+                  "",
+                  "// 5. Unauthorized response validation",
+                  "",
+                  "pm.test(\"Unauthorized request handled\", function () {",
+                  "",
+                  "    pm.expect(",
+                  "        [200, 400, 401, 403]",
+                  "    ).to.include(",
+                  "        pm.response.code",
+                  "    );",
+                  "});",
+                  "",
+                  "// ========================================",
+                  "// EDGE CASE TESTS",
+                  "// ========================================",
+                  "",
+                  "// 1. userId format validation",
+                  "",
+                  "pm.test(\"Edge - userId is valid UUID format\", function () {",
+                  "",
+                  "    const graphql = pm.request.body.graphql;",
+                  "",
+                  "    const variables =",
+                  "        typeof graphql.variables === \"string\"",
+                  "        ? JSON.parse(graphql.variables)",
+                  "        : graphql.variables;",
+                  "",
+                  "    const userId = variables.userId;",
+                  "",
+                  "    pm.expect(userId)",
+                  "        .to.be.a(\"string\")",
+                  "        .and.to.match(",
+                  "            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i",
+                  "        );",
+                  "});",
+                  "",
+                  "// 2. session should not be empty",
+                  "",
+                  "pm.test(\"Edge - session is non-empty string\", function () {",
+                  "",
+                  "    const graphql = pm.request.body.graphql;",
+                  "",
+                  "    const variables =",
+                  "        typeof graphql.variables === \"string\"",
+                  "        ? JSON.parse(graphql.variables)",
+                  "        : graphql.variables;",
+                  "",
+                  "    const session = variables.session;",
+                  "",
+                  "    pm.expect(session)",
+                  "        .to.be.a(\"string\")",
+                  "        .and.to.have.length.above(0);",
+                  "});",
+                  "",
+                  "// 3. success field datatype validation",
+                  "",
+                  "pm.test(\"Edge - success field is boolean\", function () {",
+                  "",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(",
+                  "        jsonData.data.logoutUser.success",
+                  "    ).to.be.a(\"boolean\");",
+                  "});",
+                  "",
+                  "// 4. message datatype validation",
+                  "",
+                  "pm.test(\"Edge - message field is string\", function () {",
+                  "",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(",
+                  "        jsonData.data.logoutUser.message",
+                  "    ).to.be.a(\"string\");",
+                  "});",
+                  "",
+                  "// 5. errorCode datatype validation",
+                  "",
+                  "pm.test(\"Edge - errorCode field validation\", function () {",
+                  "",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(",
+                  "        jsonData.data.logoutUser",
+                  "    ).to.have.property(\"errorCode\");",
+                  "});",
+                  "",
+                  "// 6. Response structure validation",
+                  "",
+                  "pm.test(\"Edge - logoutUser object exists\", function () {",
+                  "",
+                  "    const jsonData = pm.response.json();",
+                  "",
+                  "    pm.expect(",
+                  "        jsonData.data",
+                  "    ).to.have.property(\"logoutUser\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "protocolVersion": "auto",
+            "disabledSystemHeaders": {
+              "content-length": true,
+              "host": true,
+              "accept-encoding": true,
+              "content-type": true,
+              "connection": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api-key}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{user_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation LogoutCurrentUser (\n  $userId: ID!\n  $session: String!\n) {\n  logoutUser(\n    input: {\n      userId: $userId\n      session: $session\n    }\n  ) {\n    success\n    message\n    errorCode\n  }\n}\n\n",
+                "variables": "{\n    \"userId\": \"b3b4c892-f001-7003-8783-f04e54c311e2\",\n    \"session\": \"optional-session-token-to-invalidate\"\n}"
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/graphql",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Positive - Successful Logout",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api-key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{user_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "mutation LogoutCurrentUser (\n  $userId: ID!\n  $session: String!\n) {\n  logoutUser(\n    input: {\n      userId: $userId\n      session: $session\n    }\n  ) {\n    success\n    message\n    errorCode\n  }\n}",
+                    "variables": "{\n  \"userId\": \"b3b4c892-f001-7003-8783-f04e54c311e2\",\n  \"session\": \"optional-session-token-to-invalidate\"\n}"
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/graphql",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "{{api-key}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Authorization",
+                  "value": "{{user_token}}",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\"data\": {\"logoutUser\": {\"success\": true, \"message\": \"Logout successful\", \"errorCode\": null}}}"
+            },
+            {
+              "name": "Negative - Unauthorized Logout",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api-key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "invalid_token_xyz"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "mutation LogoutCurrentUser (\n  $userId: ID!\n  $session: String!\n) {\n  logoutUser(\n    input: {\n      userId: $userId\n      session: $session\n    }\n  ) {\n    success\n    message\n    errorCode\n  }\n}",
+                    "variables": "{\n  \"userId\": \"b3b4c892-f001-7003-8783-f04e54c311e2\",\n  \"session\": \"optional-session-token-to-invalidate\"\n}"
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/graphql",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "{{api-key}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Authorization",
+                  "value": "invalid_token_xyz",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\"data\": null, \"errors\": [{\"message\": \"Unauthorized\", \"errorType\": \"UnauthorizedException\", \"locations\": [{\"line\": 2, \"column\": 3}], \"path\": [\"logoutUser\"]}]}"
+            },
+            {
+              "name": "Edge - Logout with Missing Session",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api-key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{user_token}}"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "mutation LogoutCurrentUser (\n  $userId: ID!\n  $session: String!\n) {\n  logoutUser(\n    input: {\n      userId: $userId\n      session: $session\n    }\n  ) {\n    success\n    message\n    errorCode\n  }\n}",
+                    "variables": "{\n  \"userId\": \"b3b4c892-f001-7003-8783-f04e54c311e2\",\n  \"session\": \"\"\n}"
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/graphql",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "{{api-key}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Authorization",
+                  "value": "{{user_token}}",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\"data\": {\"logoutUser\": {\"success\": false, \"message\": \"Session token is required\", \"errorCode\": \"INVALID_SESSION\"}}}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "AI Property, Feed",
+      "item": [
+        {
+          "name": "Create Property",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const jsonData = pm.response.json();",
+                  "const result = jsonData?.data?.createPropertyWithImages;",
+                  "const propertyData = result?.data;",
+                  "",
+                  "// ===== POSITIVE TESTS =====",
+                  "pm.test(\"[Positive] Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Response has data object\", function () {",
+                  "    pm.expect(jsonData).to.have.property(\"data\");",
+                  "    pm.expect(jsonData.data).to.have.property(\"createPropertyWithImages\");",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] createPropertyWithImages success is true\", function () {",
+                  "    pm.expect(result.success).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Property data object is present\", function () {",
+                  "    pm.expect(propertyData).to.be.an(\"object\").and.not.null;",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Property id is present and non-empty\", function () {",
+                  "    pm.expect(propertyData.id).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Property title matches input\", function () {",
+                  "    pm.expect(propertyData.title).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Property price is a positive number\", function () {",
+                  "    pm.expect(propertyData.price).to.be.a(\"number\").and.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Property bedrooms is a positive number\", function () {",
+                  "    pm.expect(propertyData.bedrooms).to.be.a(\"number\").and.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Property bathrooms is a positive number\", function () {",
+                  "    pm.expect(propertyData.bathrooms).to.be.a(\"number\").and.above(0);",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Images array is present\", function () {",
+                  "    pm.expect(propertyData.images).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] No GraphQL errors in response\", function () {",
+                  "    pm.expect(jsonData).to.not.have.property(\"errors\");",
+                  "});",
+                  "",
+                  "pm.test(\"[Positive] Response time is less than 5000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});",
+                  "",
+                  "// ===== NEGATIVE TESTS =====",
+                  "pm.test(\"[Negative] success is not false on valid request\", function () {",
+                  "    pm.expect(result.success).to.not.equal(false);",
+                  "});",
+                  "",
+                  "pm.test(\"[Negative] No unauthorized error in response\", function () {",
+                  "    pm.expect(pm.response.code).to.not.equal(401);",
+                  "});",
+                  "",
+                  "pm.test(\"[Negative] No forbidden error in response\", function () {",
+                  "    pm.expect(pm.response.code).to.not.equal(403);",
+                  "});",
+                  "",
+                  "pm.test(\"[Negative] message does not indicate failure\", function () {",
+                  "    if (result && result.message) {",
+                  "        pm.expect(result.message.toLowerCase()).to.not.include(\"unauthorized\");",
+                  "        pm.expect(result.message.toLowerCase()).to.not.include(\"failed\");",
+                  "        pm.expect(result.message.toLowerCase()).to.not.include(\"error\");",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"[Negative] Property data is not null on success\", function () {",
+                  "    if (result && result.success === true) {",
+                  "        pm.expect(propertyData).to.not.be.null;",
+                  "    }",
+                  "});",
+                  "",
+                  "// ===== EDGE CASE TESTS =====",
+                  "pm.test(\"[Edge] Response body is valid JSON\", function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] createPropertyWithImages has all expected fields\", function () {",
+                  "    const expectedFields = [\"success\", \"message\", \"data\"];",
+                  "    expectedFields.forEach(field => {",
+                  "        pm.expect(result).to.have.property(field);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] Property data has all required fields\", function () {",
+                  "    if (propertyData) {",
+                  "        const expectedFields = [",
+                  "            \"id\", \"userId\", \"title\", \"price\", \"bedrooms\", \"bathrooms\",",
+                  "            \"city\", \"state\", \"country\", \"address\", \"propertyType\",",
+                  "            \"transactionType\", \"images\", \"latitude\", \"longitude\"",
+                  "        ];",
+                  "        expectedFields.forEach(field => {",
+                  "            pm.expect(propertyData).to.have.property(field);",
+                  "        });",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] latitude is a valid number\", function () {",
+                  "    if (propertyData && propertyData.latitude !== null) {",
+                  "        pm.expect(propertyData.latitude).to.be.a(\"number\");",
+                  "        pm.expect(propertyData.latitude).to.be.within(-90, 90);",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] longitude is a valid number\", function () {",
+                  "    if (propertyData && propertyData.longitude !== null) {",
+                  "        pm.expect(propertyData.longitude).to.be.a(\"number\");",
+                  "        pm.expect(propertyData.longitude).to.be.within(-180, 180);",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] amenities is an array if present\", function () {",
+                  "    if (propertyData && propertyData.amenities !== null) {",
+                  "        pm.expect(propertyData.amenities).to.be.an(\"array\");",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] images have url and label fields\", function () {",
+                  "    if (propertyData && propertyData.images && propertyData.images.length > 0) {",
+                  "        propertyData.images.forEach(img => {",
+                  "            pm.expect(img).to.have.property(\"url\");",
+                  "            pm.expect(img).to.have.property(\"label\");",
+                  "        });",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] Content-Type header is application/json\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"[Edge] yearBuilt is a reasonable year if present\", function () {",
+                  "    if (propertyData && propertyData.yearBuilt !== null) {",
+                  "        pm.expect(propertyData.yearBuilt).to.be.a(\"number\");",
+                  "        pm.expect(propertyData.yearBuilt).to.be.within(1800, new Date().getFullYear());",
+                  "    }",
+                  "});",
+                  "",
+                  "// Save property id if creation was successful",
+                  "if (result && result.success && propertyData && propertyData.id) {",
+                  "    pm.environment.set(\"property_id\", propertyData.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api-key}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{user-token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation CreatePropertyWithImages($input: CreatePropertyWithImagesInput!) {\n    createPropertyWithImages(input: $input) {\n        success\n        message\n        data {\n            id\n            userId\n            title\n            zipCode\n            propertyType\n            address\n            agentId\n            amenities\n            approvalStatus\n            approvedAt\n            approvedBy\n            bathrooms\n            bedrooms\n            city\n            country\n            createdAt\n            description\n            isFeatured\n            lotSize\n            price\n            squareFeet\n            state\n            status\n            updatedAt\n            viewsCount\n            visitsCount\n            yearBuilt\n            firstName\n            lastName\n            email\n            phoneNumber\n            district\n            category\n            condition\n            seoOptimized\n            totalFloors\n            parkingSpots\n            floorNumber\n            transactionType\n            images {\n                url\n                label\n            }\n            latitude\n            longitude\n        }\n    }\n}\n",
+                "variables": "{\n    \"input\": {\n        \"title\": \"Kyelyee homes\",\n        \"description\": \"A beautifully designed residential property ideal for families, featuring modern amenities and a prime location.\",\n        \"address\": \"123 Main Street, Apt 24\",\n        \"city\": \"Los Angeles\",\n        \"state\": \"CA\",\n        \"zip_code\": \"90001\",\n        \"latitude\": 34.052235,\n        \"longitude\": -118.243683,\n        \"transaction_type\": \"Sell\",\n        \"country\": \"USA\",\n        \"price\": 450000,\n        \"property_type\": \"Residential\",\n        \"bedrooms\": 3,\n        \"bathrooms\": 2,\n        \"currency\": \"USD\",\n        \"square_feet\": 1800,\n        \"lot_size\": 5000,\n        \"year_built\": 1995,\n        \"amenities\": [\n            \"Garage\",\n            \"Garden\",\n            \"Fireplace\",\n            \"Swimming Pool\",\n            \"Security System\"\n        ],\n        \"category\": \"Residential\",\n        \"condition\": \"NewBuilding\",\n        \"seo_optimized\": true,\n        \"total_floors\": 2,\n        \"floor_number\": 1,\n        \"parking_spots\": 2,\n        \"district\": \"Central District\",\n        \"first_name\": \"Rishu\",\n        \"last_name\": \"Singh\",\n        \"email\": \"rishu-singh0@yopmail.com\",\n        \"phone_number\": \"+1-555-123-4567\",\n        \"imageUploads\": {\n            \"filename\": \"passport-template copy.png\",\n            \"content_type\": \"image/png\",\n            \"label\": \"Living room\",\n            \"data\": \"data:image/png;base64,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IEXcoE+m8+QiwWbEH0PGkl8KmPEO0xEzagAxGxKseC5kHmUKCrc2Ntx7331qkFx+xBFH6LRpbUcazXn7bV7aS/94Ebl4l96acOihixYthirHmRxyyKE9e/Z4+umndWDc2HFjxo555eWX+w8YINnx7TlvDxs2XN/emjV70KBBXbt0feLJJ6EfrL07dOgwZSRwAZxr8pTJG97f8PwLzw8dMnTyMUfNmjkL7Y8ePXrWrFn777+/GeK1a506XTVq1GhEM2P69MGDB3sLvcKiYUKnNAbqefny5cuWLiMnJk+e7MgW6Fy4aCEq3L9fP8V0+5lnnjlo3LgJhx0GIdyKJUuXSrtHmm+88cZ76961OdT48eP79eu3ePHiF154YerUqRqaPXv2Sy+9RKgcdthhkPe3v/1N07Ci6YkTJ8J6yP2UjABE7oNrU2R+566aslKL9WwAHA6eZcIkNHwBvk+ptWJ+YfymK2zGvXUtAkmGD8G0p35b1Q4DkHbFUCaFKLbkHpt/pUFjPYzl8aQH0lQLvkma3vq1agmOmPjdNat/cO335rw1y7lTv3/w/ssuv6xbt27XXnetTWHXrll7609vvfu3v92+ddvG9zfcdOONy5cue2fFKsrp8b/+7cc/+tGMadO/efnly5YsveTiix964PeU2A+uvc4xlRaefO3iix988EH8ZNrk5Zdf/v4Pvg9Y9mUkwn539z233nJL9fbtdhT51hVXzHt77rXf/e6M6TOmTZt2+hmng+DNN98Muz3363bX3XdfeunXnJy6ecvGq67+9taqLRSubht3dfUOQshNr5497rrrznvvu2fe/DmXXPq17VXbKkrLL/ryhXffeeeAfvvPnzP321dcwUy4+pproOqhhx/+z//8T9x//nnnwcwvfvGLRUuW/PmxR2//5R0r31l12WWXycj/6le/iqSeeOKJX/3qVzNmzLj88svXrVu3evXqn//853fddZetM0KMkeAp/wZGIR4TUzdkhguhMHe4DigsBHU4lviV52gKwxOcImwYi1HVkyG47Wfi2qZmYb+u3brWsL1svB5JZWm6xuRvHB0c/gB2pLTc+PS+6hicBCbqYzvRGCgXFmfMnHHttdcN27+fpagLFy58/vkXehKU3buf/8VzCRPnF//guu/846VXpN1eeeWV5MR+PXug93PPOfeHP/zBIYce9tZbb2HQv/71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\"\n        }\n    }\n}"
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/graphql",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Positive - Property Created Successfully",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api-key}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{user-token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "mutation CreatePropertyWithImages($input: CreatePropertyWithImagesInput!) {\n    createPropertyWithImages(input: $input) {\n        success\n        message\n        data {\n            id\n            userId\n            title\n            zipCode\n            propertyType\n            address\n            agentId\n            amenities\n            approvalStatus\n            approvedAt\n            approvedBy\n            bathrooms\n            bedrooms\n            city\n            country\n            createdAt\n            description\n            isFeatured\n            lotSize\n            price\n            squareFeet\n            state\n            status\n            updatedAt\n            viewsCount\n            visitsCount\n            yearBuilt\n            firstName\n            lastName\n            email\n            phoneNumber\n            district\n            category\n            condition\n            seoOptimized\n            totalFloors\n            parkingSpots\n            floorNumber\n            transactionType\n            images {\n                url\n                label\n            }\n            latitude\n            longitude\n        }\n    }\n}",
+                    "variables": "{\n    \"input\": {\n        \"title\": \"Kirloskar homes\",\n        \"description\": \"A beautifully designed residential property ideal for families.\",\n        \"address\": \"123 Main Street, Apt 24\",\n        \"city\": \"Los Angeles\",\n        \"state\": \"CA\",\n        \"zip_code\": \"90001\",\n        \"latitude\": 34.052235,\n        \"longitude\": -118.243683,\n        \"transaction_type\": \"Sell\",\n        \"country\": \"USA\",\n        \"price\": 450000,\n        \"property_type\": \"Residential\",\n        \"bedrooms\": 3,\n        \"bathrooms\": 2,\n        \"currency\": \"USD\",\n        \"square_feet\": 1800,\n        \"lot_size\": 5000,\n        \"year_built\": 1995,\n        \"amenities\": [\"Garage\", \"Garden\", \"Fireplace\", \"Swimming Pool\", \"Security System\"],\n        \"category\": \"Residential\",\n        \"condition\": \"NewBuilding\",\n        \"seo_optimized\": true,\n        \"total_floors\": 2,\n        \"floor_number\": 1,\n        \"parking_spots\": 2,\n        \"district\": \"Central District\",\n        \"first_name\": \"Rishu\",\n        \"last_name\": \"Singh\",\n        \"email\": \"rishu-singh0@yopmail.com\",\n        \"phone_number\": \"+1-555-123-4567\"\n    }\n}"
+                  }
+                },
+                "url": {
+                  "raw": "https://graph.habitake.com/graphql",
+                  "protocol": "https",
+                  "host": [
+                    "graph",
+                    "habitake",
+                    "com"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "{{api-key}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Authorization",
+                  "value": "{{user-token}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\"data\":{\"createPropertyWithImages\":{\"success\":true,\"message\":\"Property created successfully\",\"data\":{\"id\":\"prop-uuid-12345\",\"userId\":\"user-uuid-abc\",\"title\":\"Kirloskar homes\",\"zipCode\":\"90001\",\"propertyType\":\"Residential\",\"address\":\"123 Main Street, Apt 24\",\"agentId\":null,\"amenities\":[\"Garage\",\"Garden\",\"Fireplace\",\"Swimming Pool\",\"Security System\"],\"approvalStatus\":\"PENDING\",\"approvedAt\":null,\"approvedBy\":null,\"bathrooms\":2,\"bedrooms\":3,\"city\":\"Los Angeles\",\"country\":\"USA\",\"createdAt\":\"2024-01-15T10:30:00.000Z\",\"description\":\"A beautifully designed residential property ideal for families.\",\"isFeatured\":false,\"lotSize\":5000,\"price\":450000,\"squareFeet\":1800,\"state\":\"CA\",\"status\":\"ACTIVE\",\"updatedAt\":\"2024-01-15T10:30:00.000Z\",\"viewsCount\":0,\"visitsCount\":0,\"yearBuilt\":1995,\"firstName\":\"Rishu\",\"lastName\":\"Singh\",\"email\":\"rishu-singh0@yopmail.com\",\"phoneNumber\":\"+1-555-123-4567\",\"district\":\"Central District\",\"category\":\"Residential\",\"condition\":\"NewBuilding\",\"seoOptimized\":true,\"totalFloors\":2,\"parkingSpots\":2,\"floorNumber\":1,\"transactionType\":\"Sell\",\"images\":[{\"url\":\"https://cdn.habitake.com/images/prop-uuid-12345/living-room.png\",\"label\":\"Living room\"}],\"latitude\":34.052235,\"longitude\":-118.243683}}}}"
+            },
+            {
+              "name": "Negative - Unauthorized Access",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api-key}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "mutation CreatePropertyWithImages($input: CreatePropertyWithImagesInput!) {\n    createPropertyWithImages(input: $input) {\n        success\n        message\n        data {\n            id\n            userId\n            title\n            zipCode\n            propertyType\n            address\n            agentId\n            amenities\n            approvalStatus\n            approvedAt\n            approvedBy\n            bathrooms\n            bedrooms\n            city\n            country\n            createdAt\n            description\n            isFeatured\n            lotSize\n            price\n            squareFeet\n            state\n            status\n            updatedAt\n            viewsCount\n            visitsCount\n            yearBuilt\n            firstName\n            lastName\n            email\n            phoneNumber\n            district\n            category\n            condition\n            seoOptimized\n            totalFloors\n            parkingSpots\n            floorNumber\n            transactionType\n            images {\n                url\n                label\n            }\n            latitude\n            longitude\n        }\n    }\n}",
+                    "variables": "{\n    \"input\": {\n        \"title\": \"Kirloskar homes\",\n        \"description\": \"A beautifully designed residential property ideal for families.\",\n        \"address\": \"123 Main Street, Apt 24\",\n        \"city\": \"Los Angeles\",\n        \"state\": \"CA\",\n        \"zip_code\": \"90001\",\n        \"latitude\": 34.052235,\n        \"longitude\": -118.243683,\n        \"transaction_type\": \"Sell\",\n        \"country\": \"USA\",\n        \"price\": 450000,\n        \"property_type\": \"Residential\",\n        \"bedrooms\": 3,\n        \"bathrooms\": 2,\n        \"currency\": \"USD\",\n        \"square_feet\": 1800,\n        \"lot_size\": 5000,\n        \"year_built\": 1995,\n        \"amenities\": [\"Garage\", \"Garden\", \"Fireplace\", \"Swimming Pool\", \"Security System\"],\n        \"category\": \"Residential\",\n        \"condition\": \"NewBuilding\",\n        \"seo_optimized\": true,\n        \"total_floors\": 2,\n        \"floor_number\": 1,\n        \"parking_spots\": 2,\n        \"district\": \"Central District\",\n        \"first_name\": \"Rishu\",\n        \"last_name\": \"Singh\",\n        \"email\": \"rishu-singh0@yopmail.com\",\n        \"phone_number\": \"+1-555-123-4567\"\n    }\n}"
+                  }
+                },
+                "url": {
+                  "raw": "https://graph.habitake.com/graphql",
+                  "protocol": "https",
+                  "host": [
+                    "graph",
+                    "habitake",
+                    "com"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "{{api-key}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\"data\":null,\"errors\":[{\"path\":[\"createPropertyWithImages\"],\"data\":null,\"errorType\":\"Lambda:Unhandled\",\"errorInfo\":null,\"locations\":[{\"line\":2,\"column\":5,\"sourceName\":null}],\"message\":\"Unauthorized access: Authentication required to create a property.\"}]}"
+            },
+            {
+              "name": "Edge - Missing Required Fields",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api-key}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{user-token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "mutation CreatePropertyWithImages($input: CreatePropertyWithImagesInput!) {\n    createPropertyWithImages(input: $input) {\n        success\n        message\n        data {\n            id\n            userId\n            title\n            zipCode\n            propertyType\n            address\n            agentId\n            amenities\n            approvalStatus\n            approvedAt\n            approvedBy\n            bathrooms\n            bedrooms\n            city\n            country\n            createdAt\n            description\n            isFeatured\n            lotSize\n            price\n            squareFeet\n            state\n            status\n            updatedAt\n            viewsCount\n            visitsCount\n            yearBuilt\n            firstName\n            lastName\n            email\n            phoneNumber\n            district\n            category\n            condition\n            seoOptimized\n            totalFloors\n            parkingSpots\n            floorNumber\n            transactionType\n            images {\n                url\n                label\n            }\n            latitude\n            longitude\n        }\n    }\n}",
+                    "variables": "{\n    \"input\": {\n        \"description\": \"Incomplete property submission\",\n        \"city\": \"Los Angeles\",\n        \"country\": \"USA\"\n    }\n}"
+                  }
+                },
+                "url": {
+                  "raw": "https://graph.habitake.com/graphql",
+                  "protocol": "https",
+                  "host": [
+                    "graph",
+                    "habitake",
+                    "com"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "{{api-key}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Authorization",
+                  "value": "{{user-token}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\"data\":null,\"errors\":[{\"path\":null,\"data\":null,\"errorType\":\"MappingTemplate\",\"errorInfo\":null,\"locations\":[{\"line\":1,\"column\":1,\"sourceName\":null}],\"message\":\"Variable 'input' has coerced Null value for NonNull type 'String!' at 'input.title'\"}]}"
+            }
+          ]
+        },
+        {
+          "name": "Get property with images",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "",
+                  "// ===================== POSITIVE TESTS =====================",
+                  "",
+                  "pm.test(\"Positive - Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Positive - Response body is valid JSON\", function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Positive - Response has data.listPropertiesWithImages\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"data\");",
+                  "    pm.expect(json.data).to.have.property(\"listPropertiesWithImages\");",
+                  "});",
+                  "",
+                  "pm.test(\"Positive - success is true\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    pm.expect(result.success).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"Positive - count is a non-negative number\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    pm.expect(result.count).to.be.a(\"number\");",
+                  "    pm.expect(result.count).to.be.at.least(0);",
+                  "});",
+                  "",
+                  "pm.test(\"Positive - data array is present\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    pm.expect(result.data).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(\"Positive - Each property has required fields\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    result.data.forEach(function (property) {",
+                  "        pm.expect(property).to.have.property(\"id\");",
+                  "        pm.expect(property).to.have.property(\"userId\");",
+                  "        pm.expect(property).to.have.property(\"title\");",
+                  "        pm.expect(property).to.have.property(\"price\");",
+                  "        pm.expect(property).to.have.property(\"bedrooms\");",
+                  "        pm.expect(property).to.have.property(\"bathrooms\");",
+                  "        pm.expect(property).to.have.property(\"status\");",
+                  "        pm.expect(property).to.have.property(\"approvalStatus\");",
+                  "        pm.expect(property).to.have.property(\"transactionType\");",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Positive - Each property has images array\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    result.data.forEach(function (property) {",
+                  "        pm.expect(property).to.have.property(\"images\");",
+                  "        pm.expect(property.images).to.be.an(\"array\");",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Positive - pagination object is present with required fields\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    pm.expect(result).to.have.property(\"pagination\");",
+                  "    const pagination = result.pagination;",
+                  "    pm.expect(pagination).to.have.property(\"current_page\");",
+                  "    pm.expect(pagination).to.have.property(\"total_count\");",
+                  "    pm.expect(pagination).to.have.property(\"total_pages\");",
+                  "    pm.expect(pagination).to.have.property(\"limit\");",
+                  "    pm.expect(pagination).to.have.property(\"has_next_page\");",
+                  "    pm.expect(pagination).to.have.property(\"has_prev_page\");",
+                  "});",
+                  "",
+                  "pm.test(\"Positive - approvedCount and pendingCount are numbers\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    pm.expect(result.approvedCount).to.be.a(\"number\");",
+                  "    pm.expect(result.pendingCount).to.be.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"Positive - Response time is under 5000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});",
+                  "",
+                  "pm.test(\"Positive - No GraphQL errors field in response\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.not.have.property(\"errors\");",
+                  "});",
+                  "",
+                  "// ===================== NEGATIVE TESTS =====================",
+                  "",
+                  "pm.test(\"Negative - No 401 or 403 status code\", function () {",
+                  "    pm.expect(pm.response.code).to.not.equal(401);",
+                  "    pm.expect(pm.response.code).to.not.equal(403);",
+                  "});",
+                  "",
+                  "pm.test(\"Negative - success is not false\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    pm.expect(result.success).to.not.equal(false);",
+                  "});",
+                  "",
+                  "pm.test(\"Negative - data is not null when success is true\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    if (result.success === true) {",
+                  "        pm.expect(result.data).to.not.be.null;",
+                  "    }",
+                  "});",
+                  "",
+                  "pm.test(\"Negative - No errors key at root level of response\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.not.have.property(\"errors\");",
+                  "});",
+                  "",
+                  "pm.test(\"Negative - Response does not contain UNAUTHENTICATED or Unauthorized\", function () {",
+                  "    const body = pm.response.text();",
+                  "    pm.expect(body).to.not.include(\"UNAUTHENTICATED\");",
+                  "    pm.expect(body).to.not.include(\"Unauthorized\");",
+                  "});",
+                  "",
+                  "// ===================== EDGE CASE TESTS =====================",
+                  "",
+                  "pm.test(\"Edge - count matches actual data array length\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    pm.expect(result.count).to.equal(result.data.length);",
+                  "});",
+                  "",
+                  "pm.test(\"Edge - nextToken is null or a string\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    pm.expect(result.nextToken === null || typeof result.nextToken === \"string\").to.be.true;",
+                  "});",
+                  "",
+                  "pm.test(\"Edge - Each property latitude is null or between -90 and 90\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    result.data.forEach(function (property) {",
+                  "        if (property.latitude !== null && property.latitude !== undefined) {",
+                  "            pm.expect(property.latitude).to.be.at.least(-90);",
+                  "            pm.expect(property.latitude).to.be.at.most(90);",
+                  "        }",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Edge - Each property longitude is null or between -180 and 180\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    result.data.forEach(function (property) {",
+                  "        if (property.longitude !== null && property.longitude !== undefined) {",
+                  "            pm.expect(property.longitude).to.be.at.least(-180);",
+                  "            pm.expect(property.longitude).to.be.at.most(180);",
+                  "        }",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Edge - Each image has both url and label fields\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    result.data.forEach(function (property) {",
+                  "        property.images.forEach(function (image) {",
+                  "            pm.expect(image).to.have.property(\"url\");",
+                  "            pm.expect(image).to.have.property(\"label\");",
+                  "        });",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Edge - pagination total_count matches count field\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    pm.expect(result.pagination.total_count).to.equal(result.count);",
+                  "});",
+                  "",
+                  "pm.test(\"Edge - approvalStatus values are one of APPROVED, PENDING, REJECTED\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    const validStatuses = [\"APPROVED\", \"PENDING\", \"REJECTED\"];",
+                  "    result.data.forEach(function (property) {",
+                  "        pm.expect(validStatuses).to.include(property.approvalStatus);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Edge - status values are one of ACTIVE, PENDING, INACTIVE, REJECTED\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    const validStatuses = [\"ACTIVE\", \"PENDING\", \"INACTIVE\", \"REJECTED\"];",
+                  "    result.data.forEach(function (property) {",
+                  "        pm.expect(validStatuses).to.include(property.status);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Edge - transactionType values are one of Sell, Rent, Lease\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    const validTypes = [\"Sell\", \"Rent\", \"Lease\"];",
+                  "    result.data.forEach(function (property) {",
+                  "        pm.expect(validTypes).to.include(property.transactionType);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Edge - createdAt and updatedAt are valid ISO date strings\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    result.data.forEach(function (property) {",
+                  "        pm.expect(new Date(property.createdAt).toString()).to.not.equal(\"Invalid Date\");",
+                  "        pm.expect(new Date(property.updatedAt).toString()).to.not.equal(\"Invalid Date\");",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Edge - price is a positive number\", function () {",
+                  "    const result = pm.response.json().data.listPropertiesWithImages;",
+                  "    result.data.forEach(function (property) {",
+                  "        pm.expect(property.price).to.be.a(\"number\");",
+                  "        pm.expect(property.price).to.be.above(0);",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(\"Edge - Content-Type response header contains application/json\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {
+              "connection": true,
+              "accept-encoding": true
+            }
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{user_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-api-key",
+                "value": "{{api-key}}",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{user_token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "query ListAllProperties(\n    $limit: Int\n    $page: Int\n    $latitude: Float\n    $longitude: Float\n    $radiusKm: Float\n    $status: PropertyStatus\n    $statuses: [PropertyStatus!]\n    $propertyType: PropertyType\n    $propertyTypes: [PropertyType!]\n    $searchQuery: String\n    $userId: ID\n    $minPrice: Float\n    $maxPrice: Float\n    $minBedrooms: Int\n    $maxBedrooms: Int\n    $minBathrooms: Int\n    $maxBathrooms: Int\n    $bedrooms: Int\n    $bathrooms: Int\n    $sortBy: String\n    $transactionType: TransactionType\n    $approvalStatus: ApprovalStatus\n    $visibility: String\n    $location: String\n    $listingType: String\n    $isFavorite: Boolean\n    $includeNearbyZipCodes: Boolean\n    $zipCode: String\n) {\n    listPropertiesWithImages(\n        limit: $limit\n        page: $page\n        status: $status\n        latitude: $latitude\n        longitude: $longitude\n        radiusKm: $radiusKm\n        userId: $userId\n        statuses: $statuses\n        isFavorite: $isFavorite\n        visibility: $visibility\n        propertyType: $propertyType\n        propertyTypes: $propertyTypes\n        searchQuery: $searchQuery\n        bedrooms: $bedrooms\n        bathrooms: $bathrooms\n        minPrice: $minPrice\n        maxPrice: $maxPrice\n        minBedrooms: $minBedrooms\n        maxBedrooms: $maxBedrooms\n        minBathrooms: $minBathrooms\n        maxBathrooms: $maxBathrooms\n        transactionType: $transactionType\n        approvalStatus: $approvalStatus\n        sortBy: $sortBy\n        location: $location\n        listingType: $listingType\n        zipCode: $zipCode\n        includeNearbyZipCodes: $includeNearbyZipCodes\n    ) {\n        success\n        count\n        nextToken\n        approvedCount\n        pendingCount\n        data {\n            id\n            userId\n            agentId\n            title\n            description\n            approvalStatus\n            address\n            city\n            zipCode\n            propertyType\n            price\n            bedrooms\n            bathrooms\n            status\n            viewsCount\n            createdAt\n            updatedAt\n            approvedAt\n            approvedBy\n            seoOptimized\n            country\n            isFavorite\n            transactionType\n            latitude\n            longitude\n            images {\n                url\n                label\n            }\n        }\n        pagination {\n            current_page\n            has_next_page\n            has_prev_page\n            limit\n            total_count\n            total_pages\n        }\n    }\n}\n\n\n# Variables:\n# {\n    \n    \n#     // \"limit\": 12,\n#     // \"page\": 1,\n#     // \"visibility\": \"public\",\n#     // \"sortBy\": \"mostenquired\"\n\n#    \"limit\": 12,\n#    \"page\": 1,\n#    \"userId\":\"a374a832-8071-70ae-e39b-f57c3739a0b3\",\n#    \"statuses\": [\n#        \"ACTIVE\",\"PENDING\"\n#    ]\n# //    \"searchQuery\": \"Pune, Maharashtra, India\",\n# //    \"latitude\": 18.5246091,\n# //    \"longitude\": 73.8786239,\n# //    \"radiusKm\": 50\n\n#     // \"page\": 1,\n#     // \"limit\": 12,\n#     // \"latitude\": 34.048921,\n#     // \"longitude\": -118.239112,\n#     // \"radiusKm\": 100.00\n#     // \"userId\":\"73b46832-30d1-70a9-bd8b-345cd0c58352\"\n#     // \"maxPrice\": 56510,\n#     // \"minPrice\": 100,\n#     // \"statuses\": [\n#     //     \"ACTIVE\"\n#     // ]\n#     // \"statuses\": [\n#     //     \"ACTIVE\",\n#     //     \"PENDING\"\n#     //     // \"REJECTED\"\n#     // ]\n#     // \"listingType\": \"rent\"\n#     // \"propertyTypes\": [\n#     //     \"Residential\",\n#     //     \"Luxury\"\n#     // ]\n#     // \"bedrooms\": 2,\n#     // \"bathrooms\": 4\n#     //    \"approvalStatus\":\"APPROVED\"\n#     //    \"transactionType\": \"Sell\"\n#     // \"minPrice\": 100,\n#     // \"maxPrice\": 100000,\n#     // \"visibility\": \"public\"\n#     // \"location\": \"Ghormach\"\n# }\n# // {\n# // \"limit\": 1000,\n# // \"page\": 1\n# // \"statuses\": [\n# //     \"ACTIVE\",\n# //     \"PENDING\"\n# //     // \"REJECTED\"\n# // ]\n# // \"listingType\": \"rent\"\n# // \"propertyTypes\": [\n# //     \"Residential\",\n# //     \"Luxury\"\n# // ]\n# // \"bedrooms\": 2,\n# // \"bathrooms\": 4\n# //    \"approvalStatus\":\"APPROVED\"\n# //    \"transactionType\": \"Sell\"\n# // \"minPrice\": 100,\n# // \"maxPrice\": 100000,\n# // \"visibility\": \"public\"\n# // \"location\": \"Ghormach\"\n# // }\n# // {\n# //     \"limit\": 10,\n# //     \"page\": 1,\n# //     //   \"status\": \"ACTIVE\",\n# //     \"statuses\": [\n# //         \"ACTIVE\",\n# //         \"PENDING\"\n# //     ],\n# //     \"propertyType\": \"All\",\n# //     \"searchQuery\": null\n# // }\n# // {\n# //     \"limit\": 12,\n# //     \"page\": 1,\n# //     \"status\": \"ACTIVE\",\n# //     \"propertyType\": \"Residential\",\n# //     \"searchQuery\": null,\n# //     \"minPrice\": 100,\n# //     \"maxPrice\": 10000,\n# //     \"minBedrooms\": 1,\n# //     \"maxBedrooms\": 4,\n# //     \"minBathrooms\": 1,\n# //     \"maxBathrooms\": 4\n# // }\n# // {\n# //     \"searchQuery\": \"Paria\", \"limit\": 10, \"page\": 1, \"status\": \"ACTIVE\"\n# // }\n",
+                "variables": "{\n    \"limit\": 12,\n    \"page\": 1,\n    \"userId\": \"b3b4c892-f001-7003-8783-f04e54c311e2\",\n    \"statuses\": [\n        \"ACTIVE\",\n        \"PENDING\"\n    ]\n}"
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/graphql",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "graphql"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Positive - Successful Property Listing",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api-key}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{user_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "query listPropertiesWithImages($limit: Int, $page: Int, $userId: ID, $statuses: [String]) {\n  listPropertiesWithImages(limit: $limit, page: $page, userId: $userId, statuses: $statuses) {\n    success\n    count\n    nextToken\n    approvedCount\n    pendingCount\n    data {\n      id\n      userId\n      agentId\n      title\n      description\n      approvalStatus\n      address\n      city\n      zipCode\n      propertyType\n      price\n      bedrooms\n      bathrooms\n      status\n      viewsCount\n      createdAt\n      updatedAt\n      approvedAt\n      approvedBy\n      seoOptimized\n      country\n      isFavorite\n      transactionType\n      latitude\n      longitude\n      images {\n        url\n        label\n      }\n    }\n    pagination {\n      current_page\n      has_next_page\n      has_prev_page\n      limit\n      total_count\n      total_pages\n    }\n  }\n}",
+                    "variables": "{\n  \"limit\": 12,\n  \"page\": 1,\n  \"userId\": \"b3b4c892-f001-7003-8783-f04e54c311e2\",\n  \"statuses\": [\"ACTIVE\", \"PENDING\"]\n}"
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/graphql",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "{{api-key}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Authorization",
+                  "value": "{{user_token}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"data\": {\n    \"listPropertiesWithImages\": {\n      \"success\": true,\n      \"count\": 2,\n      \"nextToken\": null,\n      \"approvedCount\": 1,\n      \"pendingCount\": 1,\n      \"data\": [\n        {\n          \"id\": \"12fd5e8e-7d9e-4bf4-91ec-4cc5b9c00503\",\n          \"userId\": \"b3b4c892-f001-7003-8783-f04e54c311e2\",\n          \"agentId\": null,\n          \"title\": \"Kyelyee Homes\",\n          \"description\": \"A beautifully designed residential property in the heart of Los Angeles.\",\n          \"approvalStatus\": \"APPROVED\",\n          \"address\": \"123 Main Street, Apt 24\",\n          \"city\": \"Los Angeles\",\n          \"zipCode\": \"90001\",\n          \"propertyType\": \"Residential\",\n          \"price\": 450000,\n          \"bedrooms\": 3,\n          \"bathrooms\": 2,\n          \"status\": \"ACTIVE\",\n          \"viewsCount\": 15,\n          \"createdAt\": \"2026-05-16T08:02:36.305084583Z\",\n          \"updatedAt\": \"2026-05-16T08:02:36.305085031Z\",\n          \"approvedAt\": \"2026-05-17T10:00:00.000Z\",\n          \"approvedBy\": \"admin-001\",\n          \"seoOptimized\": true,\n          \"country\": \"USA\",\n          \"isFavorite\": false,\n          \"transactionType\": \"Sell\",\n          \"latitude\": 34.052235,\n          \"longitude\": -118.243683,\n          \"images\": [\n            { \"url\": \"https://habitake-property-listing.s3.eu-west-1.amazonaws.com/properties/img1.jpg\", \"label\": \"Living room\" },\n            { \"url\": \"https://habitake-property-listing.s3.eu-west-1.amazonaws.com/properties/img2.jpg\", \"label\": \"Kitchen\" }\n          ]\n        },\n        {\n          \"id\": \"a3c12d7f-1b2e-4c3d-9e4f-5d6e7f8a9b0c\",\n          \"userId\": \"b3b4c892-f001-7003-8783-f04e54c311e2\",\n          \"agentId\": null,\n          \"title\": \"Sunset Villa\",\n          \"description\": \"A modern villa with stunning sunset views.\",\n          \"approvalStatus\": \"PENDING\",\n          \"address\": \"456 Sunset Blvd\",\n          \"city\": \"Beverly Hills\",\n          \"zipCode\": \"90210\",\n          \"propertyType\": \"Villa\",\n          \"price\": 1200000,\n          \"bedrooms\": 5,\n          \"bathrooms\": 4,\n          \"status\": \"PENDING\",\n          \"viewsCount\": 0,\n          \"createdAt\": \"2026-05-18T09:15:00.000Z\",\n          \"updatedAt\": \"2026-05-18T09:15:00.000Z\",\n          \"approvedAt\": null,\n          \"approvedBy\": null,\n          \"seoOptimized\": false,\n          \"country\": \"USA\",\n          \"isFavorite\": true,\n          \"transactionType\": \"Sell\",\n          \"latitude\": 34.0736,\n          \"longitude\": -118.4004,\n          \"images\": [\n            { \"url\": \"https://habitake-property-listing.s3.eu-west-1.amazonaws.com/properties/villa1.jpg\", \"label\": \"Front view\" }\n          ]\n        }\n      ],\n      \"pagination\": {\n        \"current_page\": 1,\n        \"has_next_page\": false,\n        \"has_prev_page\": false,\n        \"limit\": 12,\n        \"total_count\": 2,\n        \"total_pages\": 1\n      }\n    }\n  }\n}"
+            },
+            {
+              "name": "Negative - Unauthorized Request",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api-key}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "invalid_token"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "query listPropertiesWithImages($limit: Int, $page: Int) {\n  listPropertiesWithImages(limit: $limit, page: $page) {\n    success\n    count\n    data {\n      id\n      title\n    }\n  }\n}",
+                    "variables": "{\n  \"limit\": 12,\n  \"page\": 1\n}"
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/graphql",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "{{api-key}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Authorization",
+                  "value": "invalid_token",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"data\": null,\n  \"errors\": [\n    {\n      \"message\": \"Unauthorized\",\n      \"errorType\": \"UnauthorizedException\"\n    }\n  ]\n}"
+            },
+            {
+              "name": "Edge - Empty Result with Filters",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "x-api-key",
+                    "value": "{{api-key}}"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{user_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "graphql",
+                  "graphql": {
+                    "query": "query listPropertiesWithImages($limit: Int, $page: Int, $minPrice: Float, $maxPrice: Float, $bedrooms: Int) {\n  listPropertiesWithImages(limit: $limit, page: $page, minPrice: $minPrice, maxPrice: $maxPrice, bedrooms: $bedrooms) {\n    success\n    count\n    nextToken\n    approvedCount\n    pendingCount\n    data {\n      id\n      title\n      price\n      bedrooms\n      images {\n        url\n        label\n      }\n    }\n    pagination {\n      current_page\n      has_next_page\n      has_prev_page\n      limit\n      total_count\n      total_pages\n    }\n  }\n}",
+                    "variables": "{\n  \"limit\": 12,\n  \"page\": 1,\n  \"minPrice\": 9999999,\n  \"maxPrice\": 99999999,\n  \"bedrooms\": 100\n}"
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/graphql",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "graphql"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "x-api-key",
+                  "value": "{{api-key}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Authorization",
+                  "value": "{{user_token}}",
+                  "description": "",
+                  "enabled": true
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "enabled": true
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"data\": {\n    \"listPropertiesWithImages\": {\n      \"success\": true,\n      \"count\": 0,\n      \"nextToken\": null,\n      \"approvedCount\": 0,\n      \"pendingCount\": 0,\n      \"data\": [],\n      \"pagination\": {\n        \"current_page\": 1,\n        \"has_next_page\": false,\n        \"has_prev_page\": false,\n        \"limit\": 12,\n        \"total_count\": 0,\n        \"total_pages\": 0\n      }\n    }\n  }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
